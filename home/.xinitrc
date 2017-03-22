@@ -15,6 +15,7 @@ feh --bg-fill "$HOME/.local/share/linus.png"
 # start daemons
 xstatus &
 dunst &
+unclutter &
 urxvtd -q -o -f
 
 # start window manager
