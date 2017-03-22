@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# fixwifi -- fix WiFi
+set -o errexit
+set -o verbose
+sudo rfkill unblock wifi
+sudo systemctl restart netctl-auto@wlp2s0.service

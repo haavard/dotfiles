@@ -1,0 +1,3 @@
+clear Lock
+keysym Caps_Lock = BackSpace
+keycode 13 = 4 dollar

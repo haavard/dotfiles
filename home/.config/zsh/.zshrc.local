@@ -1,0 +1,51 @@
+# ---------------------
+# .zshrc.local
+#
+# Using grml's zshrc
+# https://grml.org/zsh/
+# ---------------------
+
+# load syntax highlighting
+[ -e /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] \
+    && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# load pkgfile hook on Arch Linux
+[ -e /usr/share/doc/pkgfile/command-not-found.zsh ] \
+    && source /usr/share/doc/pkgfile/command-not-found.zsh
+
+# store history in $XDG_DATA_HOME
+HISTFILE="${XDG_DATA_HOME:-$HOME/.cache}/.zhistory"
+
+# pass unmatched globs to the command, instead of failing
+# e.g. "zsh: no matches found: HEAD^"
+unsetopt nomatch
+
+# don't correct or warn about completion internals (e.g. _wget)
+CORRECT_IGNORE='_*'
+zstyle ':acceptline:default' nocompwarn true
+
+# add virtualenv to prompt
+function virtual_env_prompt { REPLY=${VIRTUAL_ENV+(${VIRTUAL_ENV:t}) } }
+if ! grml_theme_has_token virtual-env; then
+    grml_theme_add_token virtual-env -f virtual_env_prompt '%F{magenta}' '%f'
+fi
+zstyle ':prompt:grml:left:setup' items \
+    rc virtual-env change-root user at host path vcs percent
+
+# use nvim as vim if available
+if (( $+commands[nvim] )); then
+    alias vim=nvim
+    export EDITOR=nvim
+fi
+
+# configuration shortcuts
+alias ez='$EDITOR '"${0:A} && source ${0:A}"
+alias ev='$EDITOR ~/.vimrc'
+
+# open new terminal window in current working directory
+alias term='urxvtc -cd "$(pwd)"'
+
+# vimisms
+alias :q='exit'
+alias :e='$EDITOR'
+function :h { vim "+help $@ | only" }

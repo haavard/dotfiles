@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# cpst -- paste a command and it's output to ptpb.pw
+set -o errexit
+set -o nounset
+
+print_cwd=no
+while [ $# -gt 1 ]; do
+    case $1 in
+        -p|--pwd) print_cwd=yes ;;
+        *) break ;;
+    esac
+    shift
+done
+
+[ $EUID -eq 0 ] && prompt='#' || prompt='$'
+[ $print_cwd = yes ] && prompt="$(pwd) $prompt"
+
+cat <(echo "$prompt $@") <(eval "$@" 2>&1) \
+    | tee /dev/fd/2 \
+    | curl -sSF c=@- https://ptpb.pw/?u=1

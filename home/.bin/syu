@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# syu -- run pacman -Syu and abs
+set -o errexit
+set -o verbose
+sudo pacman -Syu
+sudo abs >/dev/null

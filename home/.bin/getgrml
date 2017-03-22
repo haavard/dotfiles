@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# getgrml -- download the latest zshrc from grml's git repository
+set -o errexit
+set -o nounset
+
+zshrc=${1:-${ZDOTDIR:-$HOME}/.zshrc}
+
+echo "Downloading grml zshrc to $zshrc"
+curl -sSLo "$zshrc" 'https://git.grml.org/f/grml-etc-core/etc/zsh/zshrc'

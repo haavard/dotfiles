@@ -1,0 +1,14 @@
+[user]
+	email = mail@haavard.me
+	name = Håvard Pettersson
+	signingkey = 928988CE
+
+[url "https://github.com/"]
+    insteadOf = "gh:"
+[url "git@github.com:"]
+    pushInsteadOf = "gh:"
+
+[url "https://aur.archlinux.org/"]
+    insteadOf = "aur:"
+[url "ssh://aur.archlinux.org/"]
+    pushInsteadOf = "aur:"

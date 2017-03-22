@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# setmute -- run pactl set-sink-mute on running sinks
+set -o errexit
+set -o nounset
+
+# set mute of RUNNING sinks
+pactl list short sinks \
+    | grep RUNNING \
+    | cut -f1 \
+    | xargs -I {} pactl set-sink-mute {} $1

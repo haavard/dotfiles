@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# xstatus -- daemon for setting the X root window name
+set -o errexit
+set -o nounset
+
+while true; do
+    wifi=$(iw dev | grep ssid | sed 's/\s*ssid\s//')
+    if [ -z "$wifi" ]; then
+        wifi='Disconnected'
+    fi
+
+    if pidof openvpn >/dev/null; then
+        wifi="$wifi (VPN)"
+    fi
+
+    battery=$(acpi --battery | sed 's/Battery 0: //g')
+    date=$(date '+%a (W%V) %Y-%m-%d %H:%M')
+
+    xsetroot -name "$wifi | $battery | $date"
+
+    sleep 5
+done
