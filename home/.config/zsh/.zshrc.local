@@ -38,12 +38,14 @@ if (( $+commands[nvim] )); then
     export EDITOR=nvim
 fi
 
+# open new terminal window in current working directory with ctrl-t
+function spawnterm { unsetopt monitor; urxvtc &!; setopt monitor }
+zle -N spawnterm
+bindkey '^t' spawnterm
+
 # configuration shortcuts
 alias ez='$EDITOR '"${0:A} && source ${0:A}"
 alias ev='$EDITOR ~/.vimrc'
-
-# open new terminal window in current working directory
-alias term='urxvtc -cd "$(pwd)"'
 
 # vimisms
 alias :q='exit'
