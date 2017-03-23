@@ -1,7 +1,7 @@
 URxvt.scrollBar: false
 URxvt.intensityStyles: false
 URxvt.font: xft:Hack-12
-URxvt.perl-ext-common:default,matcher,clipboard
+URxvt.perl-ext-common:default,matcher,clipboard,new-window
 URxvt.urgentOnBell: true
 URxvt.iso14755: false
 
@@ -10,6 +10,7 @@ URxvt.matcher.button: 1
 
 URxvt.keysym.M-c: perl:clipboard:copy
 URxvt.keysym.M-v: perl:clipboard:paste
+URxvt.keysym.Shift-Meta-Return: perl:new-window
 
 URxvt.scrollTtyOutput: false
 URxvt.scrollWithBuffer: true
