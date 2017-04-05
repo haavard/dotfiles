@@ -143,13 +143,13 @@ command! PU PlugUpdate | PlugUpgrade
 " --------
 
 " set leader to space and localleader to comma
-let mapleader="\<space>"
+let mapleader="\<Space>"
 let maplocalleader=','
-nnoremap <space> <nop>
+nnoremap <Space> <Nop>
 
 " use jk or kj to escape from normal mode
-inoremap jk <esc>
-inoremap kj <esc>
+inoremap jk <Esc>
+inoremap kj <Esc>
 
 " reselect visual after changing indent with > or <
 vnoremap > >gv
@@ -160,4 +160,4 @@ nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
 
 " double <leader> to swap to previous buffer
-nnoremap <silent> <leader><Leader> :b#<cr>
+nnoremap <silent> <Leader><Leader> :b#<CR>
