@@ -113,12 +113,10 @@ if has('nvim')
     autocmd FileType python set keywordprg=:split\|terminal\ pydoc
 endif
 
-" disable line numbers, colorcolumn and listchars for special filetypes
-autocmd BufEnter * if index(s:special_filetypes, &ft) >= 0 |
-\ if has('syntax') | setlocal colorcolumn=0 | endif |
-\ setlocal norelativenumber |
-\ setlocal nolist |
-\endif
+" disable listchars, line numbers and colorcolumn for special filetypes
+exec 'autocmd FileType ' . join(s:special_filetypes, ',') . '
+\ setlocal nolist norelativenumber |
+\ if has("syntax") | setlocal colorcolumn=0 | endif'
 
 " ---------------
 " Plugin settings
