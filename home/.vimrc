@@ -161,3 +161,9 @@ nnoremap <expr> k v:count ? 'k' : 'gk'
 
 " double <leader> to swap to previous buffer
 nnoremap <silent> <Leader><Leader> :b#<CR>
+
+" bubble lines up and down
+nnoremap <M-k> :move -2<CR>
+nnoremap <M-j> :move +1<CR>
+vnoremap <M-k> :move '<-2<CR>gv
+vnoremap <M-j> :move '>+1<CR>gv
