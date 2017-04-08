@@ -3,7 +3,14 @@
 set -o errexit
 set -o nounset
 
-while true; do
+updates_file=$(mktemp)
+trap "rm '$updates_file'" EXIT
+( while :; do
+    checkupdates >"$updates_file"
+    sleep 600
+done ) &
+
+while :; do
     wifi=$(iw dev | grep ssid | sed 's/\s*ssid\s//')
     if [ -z "$wifi" ]; then
         wifi='Disconnected'
@@ -16,7 +23,12 @@ while true; do
     battery=$(acpi --battery | sed 's/Battery 0: //g')
     date=$(date '+%a (W%V) %Y-%m-%d %H:%M')
 
-    xsetroot -name "$wifi | $battery | $date"
+    update_count=$(cat "$updates_file" | wc -l)
+    if [ "$update_count" = 0 ]; then
+        xsetroot -name "$wifi | $battery | $date"
+    else
+        xsetroot -name "$update_count update(s) | $wifi | $battery | $date"
+    fi
 
     sleep 5
 done
