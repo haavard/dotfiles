@@ -1,0 +1,90 @@
+#!/usr/bin/env sh
+# aurupdate -- update and rebuild AUR packages from their git repositories
+set -o errexit
+set -o nounset
+
+# $1 should be directory containing AUR repositories; $PWD is used otherwise
+workdir="${1:-$PWD}"
+
+# use a directory to synchronize user interaction
+lockdir=/tmp/aur_$(cat /dev/urandom | tr -cd 'a-zA-Z0-9' | head -c 32)
+trap '[ -d "$lockdir" ] && rmdir "$lockdir"' INT TERM EXIT
+
+# text formatting
+bold="$(tput bold)"
+reset="$(tput sgr0)"
+
+# prompt a yes/no question
+prompt() {
+    question="$1"
+    default="$2"
+    [ "$default" = y ] && helper="[Y/n]" || helper="[y/N]"
+
+    while :; do
+        echo -n "$bold> $question $helper $reset"
+        read -r response 2>/dev/null
+        case "$response" in
+            y|Y) return 0 ;;
+            n|N) return 1 ;;
+            '')  [ "$default" = y ] && return 0 || return 1 ;;
+        esac
+    done
+}
+
+# execute a command verbosely
+verbose() {
+    echo "$bold> Running $reset$@"
+    "$@"
+}
+
+# update package with user confirmation
+update_pkg() {
+    pkg="$(basename $1)"
+
+    if prompt "Update $pkg?" y; then
+        verbose git merge
+        verbose $EDITOR PKGBUILD
+        build_pkg "$pkg"
+    fi
+}
+
+# build package with user confirmation
+build_pkg() {
+    if prompt "Build $(basename $1)?" y; then
+        verbose makepkg -scfi || true
+    fi
+}
+
+# iterate over packages and find those with updates upstream
+echo "$bold> Looking for outdated AUR repositories...$reset"
+for pkg in "$workdir"/*/; do (
+    [ -d "$pkg"/.git ] || continue
+    cd "$pkg"
+
+    # get data from upstream
+    git fetch --quiet
+
+    # some magic git ref comparisons
+    local_ref=$(git rev-parse @)
+    remote_ref=$(git rev-parse @{u} 2>/dev/null)
+    base_ref=$(git merge-base @ @{u} 2>/dev/null)
+
+    if [ $local_ref != $remote_ref -a $local_ref = $base_ref \
+         -o $remote_ref != $base_ref ]; then
+
+        # because we're backgrounded, acquire lock before interacting with user
+        while ! mkdir "$lockdir" 2>/dev/null; do sleep 0.1; done
+        update_pkg "$pkg"
+        rmdir "$lockdir"
+    fi
+) </dev/stdin & done
+wait
+
+# rebuild -git packages if desired
+if prompt "Rebuild -git packages?" n; then
+    for pkg in "$workdir"/*-git; do (
+        [ -d "$pkg" ] || continue
+        cd "$pkg"
+        build_pkg "$pkg"
+    ) done
+fi
