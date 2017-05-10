@@ -2,15 +2,16 @@
 " .vimrc / init.vim
 " -----------------
 
+" Misc {{{
+
 " special filetypes where we disable certain features (e.g. listchars)
 let s:special_filetypes = ['qf', 'help', 'man', 'netrw', 'gitcommit']
 
 " define $XDG_DATA_HOME default value if not set
 if empty($XDG_DATA_HOME) | let $XDG_DATA_HOME = $HOME . '/.local/share' | endif
 
-" -------
-" Plugins
-" -------
+" }}}
+" Plugins {{{
 
 " set vim-plug locations depending on vim variant
 if has('nvim')
@@ -35,9 +36,8 @@ Plug 'myusuf3/numbers.vim'
 Plug 'lervag/vimtex', { 'for': 'tex' }
 call plug#end()
 
-" -------
-" Options
-" -------
+" }}}
+" Options {{{
 
 " syntax highlighting and colorscheme
 set background=dark
@@ -100,9 +100,8 @@ if has('persistent_undo')
     set undofile
 endif
 
-" ------------
-" Autocommands
-" ------------
+" }}}
+" Autocommands {{{
 
 " filetype-specific formatprgs and keywordprgs
 autocmd FileType c,cpp set formatprg=clang-format
@@ -118,9 +117,8 @@ exec 'autocmd FileType ' . join(s:special_filetypes, ',') . '
 \ setlocal nolist norelativenumber |
 \ if has("syntax") | setlocal colorcolumn=0 | endif'
 
-" ---------------
-" Plugin settings
-" ---------------
+" }}}
+" Plugin settings {{{
 
 " disable numbers.vim in special filetypes
 let g:numbers_exclude = s:special_filetypes
@@ -128,9 +126,8 @@ let g:numbers_exclude = s:special_filetypes
 " use zathura for previewing documents with vimtex
 let g:vimtex_view_method = 'zathura'
 
-" --------
-" Commands
-" --------
+" }}}
+" Commands {{{
 
 " :W to write with sudo
 command! W execute 'write !sudo tee % >/dev/null' | :edit!
@@ -138,9 +135,8 @@ command! W execute 'write !sudo tee % >/dev/null' | :edit!
 " :PU to update/upgrade plugins and vim-plug itself
 command! PU PlugUpdate | PlugUpgrade
 
-" --------
-" Mappings
-" --------
+" }}}
+" Mappings {{{
 
 " set leader to space and localleader to comma
 let mapleader="\<Space>"
@@ -167,3 +163,7 @@ nnoremap <M-k> :move -2<CR>
 nnoremap <M-j> :move +1<CR>
 vnoremap <M-k> :move '<-2<CR>gv
 vnoremap <M-j> :move '>+1<CR>gv
+
+" }}}
+
+" vim: fdm=marker
