@@ -8,6 +8,9 @@
 [url "git@github.com:"]
     pushInsteadOf = "gh:"
 
+[url "git@github.com:"]
+    insteadOf = "ghs:"
+
 [url "https://aur.archlinux.org/"]
     insteadOf = "aur:"
 [url "ssh://aur.archlinux.org/"]
