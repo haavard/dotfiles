@@ -85,6 +85,9 @@ set wildignorecase
 " start scrolling before we reach end of screen
 set scrolloff=10
 
+" disable cursor shapes in neovim
+set guicursor=
+
 " enhanced command completion
 if has('wildmenu')
     set wildmenu
