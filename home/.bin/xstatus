@@ -3,11 +3,15 @@
 set -o errexit
 set -o nounset
 
-updates_file=$(mktemp)
-trap "rm '$updates_file'" EXIT
+update_file=$(mktemp)
+temp_file=$(mktemp)
+trap "rm '$update_file' '$temp_file'" EXIT
+
 ( while :; do
-    checkupdates >"$updates_file"
-    sleep 600
+    if checkupdates >"$temp_file" && aurupdate -l ~/aur >>"$temp_file"; then
+        cat "$temp_file" >"$update_file"
+    fi
+    sleep 900
 done ) &
 
 while :; do
@@ -23,7 +27,7 @@ while :; do
     battery=$(acpi --battery | sed 's/Battery 0: //g')
     date=$(date '+%a (W%V) %Y-%m-%d %H:%M')
 
-    update_count=$(cat "$updates_file" | wc -l)
+    update_count=$(cat "$update_file" | wc -l)
     if [ "$update_count" = 0 ]; then
         xsetroot -name "$wifi | $battery | $date"
     else
