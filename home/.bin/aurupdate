@@ -59,7 +59,16 @@ update_pkg() {
 # build package with user confirmation
 build_pkg() {
     if prompt "Build $(basename "$1")?" y; then
-        verbose makepkg -scfi || true
+        verbose makepkg -scfi || return 1
+    else
+        return 1
+    fi
+}
+
+# git reset
+reset_pkg() {
+    if prompt "Reset $(basename "$1") to previous HEAD?" y; then
+        verbose git reset --hard $2
     fi
 }
 
@@ -86,7 +95,7 @@ for pkg in "$workdir"/*/; do (
         elif [ "$action" = update ]; then
             # we're backgrounded; acquire lock before interacting with user
             while ! mkdir "$lockdir" 2>/dev/null; do sleep 0.1; done
-            update_pkg "$pkg"
+            update_pkg "$pkg" || reset_pkg "$pkg" $local_ref
             rmdir "$lockdir"
         fi
     fi
@@ -99,7 +108,7 @@ if [ "$action" = update ]; then
         for pkg in "$workdir"/*-git; do (
             [ -d "$pkg" ] || continue
             cd "$pkg"
-            build_pkg "$pkg"
+            build_pkg "$pkg" || true
         ) done
     fi
 fi
