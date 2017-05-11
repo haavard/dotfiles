@@ -39,7 +39,7 @@ verbose() {
 
 # update package with user confirmation
 update_pkg() {
-    pkg="$(basename $1)"
+    pkg="$(basename "$1")"
 
     if prompt "Update $pkg?" y; then
         verbose git merge
@@ -50,7 +50,7 @@ update_pkg() {
 
 # build package with user confirmation
 build_pkg() {
-    if prompt "Build $(basename $1)?" y; then
+    if prompt "Build $(basename "$1")?" y; then
         verbose makepkg -scfi || true
     fi
 }
@@ -62,7 +62,7 @@ for pkg in "$workdir"/*/; do (
     cd "$pkg"
 
     # get data from upstream
-    git fetch --quiet
+    git fetch --quiet 2>/dev/null
 
     # some magic git ref comparisons
     local_ref=$(git rev-parse @)
