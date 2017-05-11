@@ -3,8 +3,16 @@
 set -o errexit
 set -o nounset
 
-# $1 should be directory containing AUR repositories; $PWD is used otherwise
-workdir="${1:-$PWD}"
+action=update
+workdir="$PWD"
+
+while ! [ -z "${1:-}" ]; do
+    case "$1" in
+        -l) action=list ;;
+        *)  workdir="$1" ;;
+     esac
+     shift
+done
 
 # use a directory to synchronize user interaction
 lockdir=/tmp/aur_$(cat /dev/urandom | tr -cd 'a-zA-Z0-9' | head -c 32)
@@ -56,7 +64,9 @@ build_pkg() {
 }
 
 # iterate over packages and find those with updates upstream
-echo "$bold> Looking for outdated AUR repositories...$reset"
+if [ "$action" = update ]; then
+    echo "$bold> Looking for outdated AUR repositories in $workdir$reset"
+fi
 for pkg in "$workdir"/*/; do (
     [ -d "$pkg"/.git ] || continue
     cd "$pkg"
@@ -71,20 +81,25 @@ for pkg in "$workdir"/*/; do (
 
     if [ $local_ref != $remote_ref -a $local_ref = $base_ref \
          -o $remote_ref != $base_ref ]; then
-
-        # because we're backgrounded, acquire lock before interacting with user
-        while ! mkdir "$lockdir" 2>/dev/null; do sleep 0.1; done
-        update_pkg "$pkg"
-        rmdir "$lockdir"
+        if [ "$action" = list ]; then
+            echo "$(basename "$pkg")"
+        elif [ "$action" = update ]; then
+            # we're backgrounded; acquire lock before interacting with user
+            while ! mkdir "$lockdir" 2>/dev/null; do sleep 0.1; done
+            update_pkg "$pkg"
+            rmdir "$lockdir"
+        fi
     fi
 ) </dev/stdin & done
 wait
 
-# rebuild -git packages if desired
-if prompt "Rebuild -git packages?" n; then
-    for pkg in "$workdir"/*-git; do (
-        [ -d "$pkg" ] || continue
-        cd "$pkg"
-        build_pkg "$pkg"
-    ) done
+if [ "$action" = update ]; then
+    # rebuild -git packages if desired
+    if prompt "Rebuild -git packages?" n; then
+        for pkg in "$workdir"/*-git; do (
+            [ -d "$pkg" ] || continue
+            cd "$pkg"
+            build_pkg "$pkg"
+        ) done
+    fi
 fi
