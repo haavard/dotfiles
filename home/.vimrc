@@ -61,8 +61,12 @@ set hidden
 " enable line numbers
 set number
 
-" visible whitespace
-set list listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
+" visible whitespace, if vim supports it
+try
+    set list listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
+catch
+    set nolist
+endtry
 
 " tabs
 set tabstop=4      " how many cols per tab character
