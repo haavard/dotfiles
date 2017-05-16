@@ -4,4 +4,3 @@ set -o errexit
 set -o verbose
 sudo pacman -Syu
 aurupdate ~/aur
-sudo abs >/dev/null &
