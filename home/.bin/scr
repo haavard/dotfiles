@@ -425,7 +425,7 @@ gfyname="${adjective1}${adjective2}${animal}.png"
 filename="$(mktemp --suffix=.png)"
 trap "rm -f '$filename'" EXIT
 
-maim $@ "$filename"
+maim "$@" "$filename"
 optipng "$filename" 2>/dev/null
 chmod 0444 "$filename"
 

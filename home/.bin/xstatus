@@ -8,7 +8,8 @@ temp_file=$(mktemp)
 trap "rm '$update_file' '$temp_file'" EXIT
 
 ( while :; do
-    if checkupdates >"$temp_file" && aurupdate -l ~/aur >>"$temp_file"; then
+    # if checkupdates >"$temp_file" && aurupdate -l ~/aur >>"$temp_file"; then
+    if checkupdates >"$temp_file"; then
         cat "$temp_file" >"$update_file"
     fi
     sleep 900
@@ -27,7 +28,7 @@ while :; do
     battery=$(acpi --battery | sed 's/Battery 0: //g')
     date=$(date '+%a (W%V) %Y-%m-%d %H:%M')
 
-    update_count=$(cat "$update_file" | wc -l)
+    update_count=$(wc -l <"$update_file")
     if [ "$update_count" = 0 ]; then
         xsetroot -name "$wifi | $battery | $date"
     else

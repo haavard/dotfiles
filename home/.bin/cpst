@@ -15,6 +15,6 @@ done
 [ $EUID -eq 0 ] && prompt='#' || prompt='$'
 [ $print_cwd = yes ] && prompt="$(pwd) $prompt"
 
-cat <(echo "$prompt $@") <(eval "$@" 2>&1) \
+cat <(echo "$prompt $*") <(eval "$@" 2>&1) \
     | tee /dev/fd/2 \
     | curl -sSF c=@- https://ptpb.pw/?u=1

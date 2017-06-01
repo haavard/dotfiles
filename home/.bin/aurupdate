@@ -15,7 +15,7 @@ while ! [ -z "${1:-}" ]; do
 done
 
 # use a directory to synchronize user interaction
-lockdir=/tmp/aur_$(cat /dev/urandom | tr -cd 'a-zA-Z0-9' | head -c 32)
+lockdir=/tmp/aur_$(tr -cd 'a-zA-Z0-9' </dev/urandom | head -c 32)
 trap '[ -d "$lockdir" ] && rmdir "$lockdir"' INT TERM EXIT
 
 # text formatting
@@ -29,7 +29,7 @@ prompt() {
     [ "$default" = y ] && helper="[Y/n]" || helper="[y/N]"
 
     while :; do
-        echo -n "$bold> $question $helper $reset"
+        printf '%s> %s %s %s' "$bold" "$question" "$helper" "$reset"
         read -r response 2>/dev/null
         case "$response" in
             y|Y) return 0 ;;
@@ -41,7 +41,7 @@ prompt() {
 
 # execute a command verbosely
 verbose() {
-    echo "$bold> Running $reset$@"
+    printf '%s> Running %s%s\n' "$bold" "$reset" "$*"
     "$@"
 }
 
@@ -51,7 +51,7 @@ update_pkg() {
 
     if prompt "Update $pkg?" y; then
         verbose git merge
-        verbose $EDITOR PKGBUILD
+        verbose "$EDITOR" PKGBUILD
         build_pkg "$pkg"
     fi
 }
@@ -68,16 +68,17 @@ build_pkg() {
 # git reset
 reset_pkg() {
     if prompt "Reset $(basename "$1") to previous HEAD?" y; then
-        verbose git reset --hard $2
+        verbose git reset --hard "$2"
     fi
 }
 
 # iterate over packages and find those with updates upstream
 if [ "$action" = update ]; then
-    echo "$bold> Looking for outdated AUR repositories in $workdir$reset"
+    printf '%s> Looking for outdated AUR repositories in %s%s\n' \
+        "$bold" "$workdir" "$reset"
 fi
 for pkg in "$workdir"/*/; do (
-    [ -d "$pkg"/.git ] || continue
+    [ -d "$pkg"/.git ] || exit
     cd "$pkg"
 
     # get data from upstream
@@ -85,17 +86,17 @@ for pkg in "$workdir"/*/; do (
 
     # some magic git ref comparisons
     local_ref=$(git rev-parse @)
-    remote_ref=$(git rev-parse @{u} 2>/dev/null)
-    base_ref=$(git merge-base @ @{u} 2>/dev/null)
+    remote_ref=$(git rev-parse '@{u}' 2>/dev/null)
+    base_ref=$(git merge-base @ '@{u}' 2>/dev/null)
 
-    if [ $local_ref != $remote_ref -a $local_ref = $base_ref \
-         -o $remote_ref != $base_ref ]; then
+    if [ "$local_ref" != "$remote_ref" ] && [ "$local_ref" = "$base_ref" ] \
+         || [ "$remote_ref" != "$base_ref" ]; then
         if [ "$action" = list ]; then
-            echo "$(basename "$pkg")"
+            basename "$pkg"
         elif [ "$action" = update ]; then
             # we're backgrounded; acquire lock before interacting with user
             while ! mkdir "$lockdir" 2>/dev/null; do sleep 0.1; done
-            update_pkg "$pkg" || reset_pkg "$pkg" $local_ref
+            update_pkg "$pkg" || reset_pkg "$pkg" "$local_ref"
             rmdir "$lockdir"
         fi
     fi
@@ -106,7 +107,7 @@ if [ "$action" = update ]; then
     # rebuild -git packages if desired
     if prompt "Rebuild -git packages?" n; then
         for pkg in "$workdir"/*-git; do (
-            [ -d "$pkg" ] || continue
+            [ -d "$pkg" ] || exit
             cd "$pkg"
             build_pkg "$pkg" || true
         ) done

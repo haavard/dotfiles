@@ -7,4 +7,4 @@ set -o nounset
 pactl list short sinks \
     | grep RUNNING \
     | cut -f1 \
-    | xargs -I {} pactl set-sink-mute {} $1
+    | xargs -I {} pactl set-sink-mute {} "$1"

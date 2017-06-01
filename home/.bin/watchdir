@@ -6,9 +6,9 @@ set -o nounset
 watchpath=$1
 shift
 
-$@
+"$@"
 while inotifywait -qq --recursive --event modify "$watchpath"
 do
     echo
-    $@
+    "$@"
 done
