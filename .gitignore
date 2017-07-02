@@ -1,4 +1,7 @@
 home/.config/nvim/.netrwhist
+home/.config/zsh/.cache
+home/.config/zsh/.zshrc
+home/.config/zsh/.zcompdump
 home/.weechat/logs
 home/.weechat/plugins
 home/.weechat/script/plugins.xml.gz
