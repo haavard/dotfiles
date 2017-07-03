@@ -1,0 +1,38 @@
+" ----------
+" .ideavimrc
+" ----------
+
+" Options {{{
+
+" ignore case in search, except when uppercase is used
+set ignorecase smartcase
+
+" disable incremental search and highlighted search results
+set noincsearch nohlsearch
+
+" start scrolling before we reach end of screen
+set scrolloff=10
+
+" }}}
+" Mappings {{{
+
+" set leader to space and localleader to comma
+let mapleader="\<Space>"
+let maplocalleader=','
+nnoremap <Space> <Nop>
+
+" use jk or kj to escape from normal mode
+inoremap jk <Esc>
+inoremap kj <Esc>
+
+" reselect visual after changing indent with > or <
+vnoremap > >gv
+vnoremap < <gv
+
+" move logically across wrapped lines with j/k
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
+
+" }}}
+
+" vim: fdm=marker
