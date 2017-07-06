@@ -24,6 +24,9 @@ unsetopt nomatch
 CORRECT_IGNORE='_*'
 zstyle ':acceptline:default' nocompwarn true
 
+# use full hostname in prompt
+zstyle ':prompt:grml:left:items:host' token '%M '
+
 # add virtualenv to prompt
 function virtual_env_prompt { REPLY=${VIRTUAL_ENV+(${VIRTUAL_ENV:t}) } }
 if ! grml_theme_has_token virtual-env; then
