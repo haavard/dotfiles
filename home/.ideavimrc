@@ -10,9 +10,6 @@ set ignorecase smartcase
 " disable incremental search and highlighted search results
 set noincsearch nohlsearch
 
-" start scrolling before we reach end of screen
-set scrolloff=10
-
 " }}}
 " Mappings {{{
 
