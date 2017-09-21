@@ -5,13 +5,17 @@
 # https://grml.org/zsh/
 # ---------------------
 
-# load syntax highlighting
-[ -e /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] \
-    && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# try sourcing a file, silently ignoring if it doesn't exist
+function source_if_exists { [ -e "$1" ] && source "$1" }
 
-# load pkgfile hook on Arch Linux
-[ -e /usr/share/doc/pkgfile/command-not-found.zsh ] \
-    && source /usr/share/doc/pkgfile/command-not-found.zsh
+# Arch Linux syntax highlighting and command-not-found
+source_if_exists \
+    /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source_if_exists /usr/share/doc/pkgfile/command-not-found.zsh
+
+# Ubuntu syntax highlighting and command_not_found
+source_if_exists /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source_if_exists /etc/zsh_command_not_found
 
 # store history in $XDG_DATA_HOME
 HISTFILE="${XDG_DATA_HOME:-$HOME/.cache}/.zhistory"
