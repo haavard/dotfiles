@@ -10,7 +10,7 @@ gpg-connect-agent /bye
 export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 
 # desktop background
-feh --bg-fill "$HOME/.local/share/linus.png"
+feh --bg-fill --no-fehbg "$HOME/.local/share/linus.png"
 
 # start daemons
 xstatus &
