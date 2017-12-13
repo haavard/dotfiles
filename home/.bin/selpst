@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# selpst -- paste X selection to ptpb.pw
+set -o errexit
+set -o nounset
+
+url=$(xsel -o "$@" | curl -sSF c=@- https://ptpb.pw/?u=1) \
+    || (code=$? && notify-send "Paste error: $code" && exit $code)
+
+echo "$url" | tee -a "${XDG_CACHE_HOME:-$HOME/.cache}"/selpst.log
+echo "$url" | xsel -b
+notify-send 'Selection pasted' "$url"
