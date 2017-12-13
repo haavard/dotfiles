@@ -4,9 +4,12 @@ use strict;
 use warnings;
 use Cwd;
 
+our $VERSION = 0.1;
+
 # From https://gist.github.com/tpikonen/10294723
 
 # Opening a new window.
+
 # Fixed version of script from
 # http://lists.schmorp.de/pipermail/rxvt-unicode/2012q3/001609.html
 # by José Romildo Malaquias <malaquias at gmail.com>
@@ -14,27 +17,24 @@ use Cwd;
 # Debugging:   urxvt --perl-lib ${HOME}/.urxvt -pe new-window
 # Example config: URxvt.keysym.Control-Shift-N: perl:new-window
 
-sub new_window
-{
-    my ($self) = @_;
-    my $ccwd = readlink("/proc/".$self->{child_pid}."/cwd");
-    new urxvt::term $self->env, $urxvt::RXVTNAME, -cd => $ccwd;
-}
-
 sub on_child_start {
-    my ($self,$pid) = @_;
+    my ($self, $pid) = @_;
 
-    $self->{child_pid} = $pid;  # keep for later determining our shells
-                                # CWD for relative path names
-    ()
+    $self->{child_pid} = $pid;  # store pid of child so we can retrieve cwd
+    return ();
 }
 
+sub on_action {
+    my ($self, $action) = @_;
 
-sub on_user_command
-{
-    my ($self, $cmd) = @_;
-
-    if ($cmd eq "new-window") {
+    if ($action eq 'new-window') {
         new_window($self);
     }
+    return ();
+}
+
+sub new_window {
+    my ($self) = @_;
+    my $child_cwd = readlink "/proc/$self->{child_pid}/cwd";
+    return urxvt::term->new($self->env, $urxvt::RXVTNAME, -cd => $child_cwd);
 }
