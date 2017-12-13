@@ -436,6 +436,6 @@ url="https://haavard.me/ss/$gfyname"
 echo "$url" | tee -a "${XDG_CACHE_HOME:-$HOME/.cache}"/scr.log
 echo -n "$url" | xsel -b
 
-notify-send 'Uploaded' "$gfyname"
+notify-send 'Uploaded' "$url"
 
 # vim: fdm=marker
