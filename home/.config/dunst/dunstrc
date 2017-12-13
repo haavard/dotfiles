@@ -16,6 +16,7 @@
 
 [shortcuts]
     close = ctrl+space
+    context = mod4+space
 
 [frame]
     width = 3
