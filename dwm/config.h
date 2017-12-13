@@ -56,6 +56,9 @@ static const char *termcmd[]  = { "urxvtc", NULL };
 static const char *screenshotcmd[]    = { "scr", NULL };
 static const char *screenshotselcmd[] = { "scr", "--select", NULL };
 
+static const char *selpastecmd[] = { "selpst", "-p", NULL };
+static const char *clippastecmd[] = { "selpst", "-b", NULL };
+
 static const char *raisevolcmd[] = { "setvol", "+5%", NULL };
 static const char *lowervolcmd[] = { "setvol", "-5%", NULL };
 static const char *mutecmd[]     = { "setmute", "toggle", NULL };
@@ -66,6 +69,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ 0,                            XK_Print,  spawn,          {.v = screenshotcmd } },
 	{ ControlMask,                  XK_Print,  spawn,          {.v = screenshotselcmd } },
+	{ MODKEY,                       XK_u,      spawn,          {.v = selpastecmd } },
+	{ MODKEY|ShiftMask,             XK_u,      spawn,          {.v = clippastecmd } },
 	{ 0,              XF86XK_AudioRaiseVolume, spawn,          {.v = raisevolcmd } },
 	{ 0,              XF86XK_AudioLowerVolume, spawn,          {.v = lowervolcmd } },
 	{ 0,                     XF86XK_AudioMute, spawn,          {.v = mutecmd } },
@@ -82,14 +87,14 @@ static Key keys[] = {
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-//	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+/*	{ MODKEY,                       XK_space,  setlayout,      {0} },
+	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} }, */
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-//	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-//	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-//	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-//	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+/*	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } }, */
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
