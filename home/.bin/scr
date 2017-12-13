@@ -429,7 +429,8 @@ maim "$@" "$filename"
 optipng "$filename" 2>/dev/null
 chmod 0444 "$filename"
 
-scp -q "$filename" vps:/var/www/ss/"$gfyname"
+scp -q "$filename" vps:/var/www/ss/"$gfyname" \
+    || (code=$? && notify-send "Upload error: $code" && exit $code)
 
 url="https://haavard.me/ss/$gfyname"
 echo "$url" | tee -a "${XDG_CACHE_HOME:-$HOME/.cache}"/scr.log
