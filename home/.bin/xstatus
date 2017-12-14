@@ -3,19 +3,59 @@
 set -o errexit
 set -o nounset
 
-update_file=$(mktemp)
-temp_file=$(mktemp)
-trap "rm '$update_file' '$temp_file'" EXIT
+update_interval=5  # how often to run main loops (seconds)
+checkupdates_interval=15  # how often to refresh checkupdates data (minutes)
+crypto_interval=15  # how often to refresh cryptocurrency data (minutes)
+crypto_tickers=(btc-usd ltc-usd eth-usd)  # Cryptonator tickers to show
+date_format='+%a (W%V) %Y-%m-%d %H:%M'
 
+# create temporary files to cache online data
+temp_dir=$(mktemp -d --tmpdir xstatus.XXXXXXXXXX)
+update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
+temp_update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
+declare -A crypto_files
+for ticker in "${crypto_tickers[@]}"; do
+    crypto_files[$ticker]=$(mktemp -p "$temp_dir" crypto.XXXXXXXXXX)
+done
+
+tempfiles=("$update_file" "$temp_update_file" "${crypto_files[@]}")
+trap "rm ${tempfiles[*]@Q} && rmdir '$temp_dir'" EXIT
+
+# exit with 0 if file is empty or older than $minutes
+function file_expired {
+    file=$1
+    minutes=$2
+    [ ! -s "$file" ] || [ -n "$(find "$file" -mmin +"$minutes")" ]
+}
+
+# online data refresh loop
 ( while :; do
-    # if checkupdates >"$temp_file" && aurupdate -l ~/aur >>"$temp_file"; then
-    if checkupdates >"$temp_file"; then
-        cat "$temp_file" >"$update_file"
+    # check for updates if we last checked more than $checkupdates_interval
+    # minutes ago, or if pacman was run after that
+    if file_expired "$update_file" "$checkupdates_interval" \
+            || [ /var/log/pacman.log -nt "$update_file" ]; then
+        # fetch updates to a temp file first, only overwriting on success
+        # this avoids erasing $update_file if checkupdates/aurupdate fails
+        : >"$temp_update_file"
+        if checkupdates >"$temp_update_file" \
+                && aurupdate -l ~/aur >>"$temp_update_file"; then
+            cat "$temp_update_file" >"$update_file"
+        fi
     fi
-    sleep 900
+
+    # update crypto tickers, ignore any errors
+    for ticker in "${crypto_tickers[@]}"; do
+        crypto_file="${crypto_files[$ticker]}"
+        if file_expired "$crypto_file" "$crypto_interval"; then
+            curl -fsSLo "${crypto_files[$ticker]}" \
+                "https://api.cryptonator.com/api/ticker/$ticker" || true
+        fi
+    done
+
+    sleep $update_interval
 done ) &
 
-while :; do
+function wifi_status {
     wifi=$(iw dev | grep ssid | sed 's/\s*ssid\s//')
     if [ -z "$wifi" ]; then
         wifi='Disconnected'
@@ -25,15 +65,40 @@ while :; do
         wifi="$wifi (VPN)"
     fi
 
+    echo "$wifi"
+}
+
+# format a Cryptonator JSON file as a status bar string
+function crypto_status {
+    # extract $symbol, $price, $change, $timestamp
+    eval "$(jq -r '@sh "symbol=\(.ticker.base) price=\(.ticker.price) change=\(.ticker.change) timestamp=\(.timestamp)"' "$1")"
+    [ -z "${symbol+x}" ] && exit  # exit if symbol is unset
+
+    [[ "$change" =~ ^- ]] && dir='▼' || dir='▲';
+
+    # format timestamp in a human-friendly way
+    age=$(python -c "import time as t,humanize as h;print(h.naturaldelta(t.time()-$timestamp))")
+
+    printf "%s \$%.2f %s %+.1f (%s)" "$symbol" "$price" "$dir" "$change" "$age"
+}
+
+# update status text loop
+i=0
+while :; do
+    date=$(date "$date_format")
     battery=$(acpi --battery | sed 's/Battery 0: //g')
-    date=$(date '+%a (W%V) %Y-%m-%d %H:%M')
-
+    wifi=$(wifi_status)
     update_count=$(wc -l <"$update_file")
-    if [ "$update_count" = 0 ]; then
-        xsetroot -name "$wifi | $battery | $date"
-    else
-        xsetroot -name "$update_count update(s) | $wifi | $battery | $date"
-    fi
 
-    sleep 5
+    # cycle through tickers
+    crypto_file="${crypto_files[${crypto_tickers[i++ % ${#crypto_tickers[@]}]}]}"
+    crypto_status=$(crypto_status "$crypto_file")
+
+    root="$wifi | $battery | $date"
+    [ "$update_count" -gt 0 ] && root="$update_count update(s) | $root"
+    [ -n "$crypto_status" ] && root="$crypto_status | $root"
+
+    xsetroot -name "$root"
+
+    sleep $update_interval
 done
