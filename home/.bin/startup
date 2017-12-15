@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# startup -- start some applications
+chromium </dev/null &>/dev/null &
+thunderbird </dev/null &>/dev/null &
+urxvtc-autostart -title IRC -e ssh vps -t tmux a
+discord </dev/null &>/dev/null &
+disown
