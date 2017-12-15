@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+# urxvtc-autostart -- run urxvtc, starting urxvtd if necessary
+urxvtc "$@"
+if [ $? -eq 2 ]; then
+    urxvtd -q -o -f
+    urxvtc "$@"
+fi
