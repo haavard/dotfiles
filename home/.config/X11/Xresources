@@ -11,6 +11,9 @@ URxvt.matcher.button: 1
 URxvt.keysym.Meta-c: clipboard:copy
 URxvt.keysym.Meta-v: clipboard:paste
 URxvt.keysym.Shift-Meta-Return: new-window:new-window
+URxvt.keysym.Control-Up: font-size:increase
+URxvt.keysym.Control-Down: font-size:decrease
+URxvt.keysym.Control-Equal: font-size:reset
 
 URxvt.scrollTtyOutput: false
 URxvt.scrollWithBuffer: true
