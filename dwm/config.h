@@ -25,6 +25,10 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
+	{ "Chromium", "chromium", NULL,       1 << 0,       False,       -1 },
+	{ "Thunderbird", "Mail",  NULL,       1 << 2,       False,       -1 },
+	{ NULL,       NULL,       "IRC",      1 << 3,       False,       -1 },
+	{ "discord",  NULL,       NULL,       1 << 4,       False,       -1 },
 	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
 };
 
