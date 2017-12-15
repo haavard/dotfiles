@@ -12,13 +12,12 @@ date_format='+%a (W%V) %Y-%m-%d %H:%M'
 # create temporary files to cache online data
 temp_dir=$(mktemp -d --tmpdir xstatus.XXXXXXXXXX)
 update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
-temp_update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
 declare -A crypto_files
 for ticker in "${crypto_tickers[@]}"; do
     crypto_files[$ticker]=$(mktemp -p "$temp_dir" crypto.XXXXXXXXXX)
 done
 
-tempfiles=("$update_file" "$temp_update_file" "${crypto_files[@]}")
+tempfiles=("$update_file" "${crypto_files[@]}")
 trap "rm ${tempfiles[*]@Q} && rmdir '$temp_dir'" EXIT
 
 # exit with 0 if file is empty or older than $minutes
@@ -36,11 +35,12 @@ function file_expired {
             || [ /var/log/pacman.log -nt "$update_file" ]; then
         # fetch updates to a temp file first, only overwriting on success
         # this avoids erasing $update_file if checkupdates/aurupdate fails
-        : >"$temp_update_file"
+        temp_update_file=$(mktemp)
         if checkupdates >"$temp_update_file" \
                 && aurupdate -l ~/aur >>"$temp_update_file"; then
             cat "$temp_update_file" >"$update_file"
         fi
+        rm "$temp_update_file"
     fi
 
     # update crypto tickers, ignore any errors
