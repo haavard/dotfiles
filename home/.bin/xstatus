@@ -95,7 +95,7 @@ while :; do
     crypto_status=$(crypto_status "$crypto_file")
 
     root="$wifi | $battery | $date"
-    [ "$update_count" -gt 0 ] && root="$update_count update(s) | $root"
+    [ "$update_count" -gt 0 ] && root="$update_count⇅ | $root"
     [ -n "$crypto_status" ] && root="$crypto_status | $root"
 
     xsetroot -name "$root"
