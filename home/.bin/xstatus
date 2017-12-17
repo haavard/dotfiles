@@ -104,6 +104,7 @@ while :; do
     date=$(date "$date_format")
     battery=$(acpi --battery | sed 's/Battery 0: //g')
     wifi=$(wifi_status)
+    emails=$(cut -d: -f1 ~/.thunderbird/*/unread-counts | paste -sd+ - | bc)
     update_count=$(( $(wc -l <"$update_file") - 1 ))
 
     # cycle through tickers
@@ -112,6 +113,7 @@ while :; do
 
     root="$wifi | $battery | $date"
     [ "$update_count" -gt 0 ] && root="${update_count}⇅ | $root"
+    [ "$emails" -gt 0 ] && root="${emails}✉ | $root"
     [ -n "$crypto_status" ] && root="$crypto_status | $root"
 
     xsetroot -name "$root"
