@@ -33,20 +33,23 @@ function file_expired {
     # minutes ago, or if pacman was run after that
     if file_expired "$update_file" "$checkupdates_interval" \
             || [ /var/log/pacman.log -nt "$update_file" ]; then
+        echo "[$(date +%H:%M:%S)] Checking updates..."
         # fetch updates to a temp file first, only overwriting on success
         # this avoids erasing $update_file if checkupdates/aurupdate fails
         temp_update_file=$(mktemp)
         if checkupdates >"$temp_update_file" \
-                && aurupdate -l ~/aur >>"$temp_update_file"; then
-            cat "$temp_update_file" >"$update_file"
+                || aurupdate -l ~/aur >>"$temp_update_file"; then
+            cat <(echo 'Updates:') "$temp_update_file" >"$update_file"
         fi
         rm "$temp_update_file"
     fi
 
-    # update crypto tickers, ignore any errors
+    # update crypto tickers if data is expired or not valid
     for ticker in "${crypto_tickers[@]}"; do
         crypto_file="${crypto_files[$ticker]}"
-        if file_expired "$crypto_file" "$crypto_interval"; then
+        if file_expired "$crypto_file" "$crypto_interval" \
+                || ! jq --exit-status . >/dev/null "$crypto_file"; then
+            echo "[$(date +%H:%M:%S)] Updating $ticker..."
             curl -fsSLo "${crypto_files[$ticker]}" \
                 "https://api.cryptonator.com/api/ticker/$ticker" || true
         fi
@@ -101,14 +104,14 @@ while :; do
     date=$(date "$date_format")
     battery=$(acpi --battery | sed 's/Battery 0: //g')
     wifi=$(wifi_status)
-    update_count=$(wc -l <"$update_file")
+    update_count=$(( $(wc -l <"$update_file") - 1 ))
 
     # cycle through tickers
-    crypto_file="${crypto_files[${crypto_tickers[i++ % ${#crypto_tickers[@]}]}]}"
+    crypto_file="${crypto_files[${crypto_tickers[i++%${#crypto_tickers[@]}]}]}"
     crypto_status=$(crypto_status "$crypto_file")
 
     root="$wifi | $battery | $date"
-    [ "$update_count" -gt 0 ] && root="$update_count⇅ | $root"
+    [ "$update_count" -gt 0 ] && root="${update_count}⇅ | $root"
     [ -n "$crypto_status" ] && root="$crypto_status | $root"
 
     xsetroot -name "$root"
