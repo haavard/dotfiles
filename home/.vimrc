@@ -52,6 +52,9 @@ end
 " always show status line
 set laststatus=2
 
+" hide default mode indicator because we have lightline
+set noshowmode
+
 " enable modeline detection
 set modeline modelines=5
 
