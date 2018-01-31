@@ -63,7 +63,7 @@ zstyle ':prompt:grml:left:setup' items \
     rc virtual-env change-root user at host-color host path vcs percent
 
 # use nvim as vim if available
-if (( $+commands[nvim] )); then
+if check_com -c nvim; then
     alias vim=nvim
     export EDITOR=nvim
 fi
