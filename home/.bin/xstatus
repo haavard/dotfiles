@@ -1,12 +1,24 @@
 #!/usr/bin/env bash
 # xstatus -- daemon for setting the X root window name
-set -o errexit
 set -o nounset
+
+pidfile="${XDG_CACHE_HOME:-$HOME/.cache}"/xstatus.pid
+if ps -p "$(cat "$pidfile")" &>/dev/null; then
+    echo "Already running, sending refresh signal..."
+    kill -USR1 "$(cat "$pidfile")"
+    exit
+else
+    echo "Writing PID $$ to '$pidfile'"
+    echo $$ >"$pidfile"
+fi
+
+# instant refresh on USR1 (because wait is interrupted in main loop)
+trap 'true' USR1
 
 update_interval=5  # how often to run main loops (seconds)
 checkupdates_interval=15  # how often to refresh checkupdates data (minutes)
 crypto_interval=15  # how often to refresh cryptocurrency data (minutes)
-crypto_tickers=(btc-usd ltc-usd eth-usd)  # Cryptonator tickers to show
+crypto_tickers=(bitcoin litecoin ethereum nano)  # CoinMarketCap tickers
 date_format='+%a (W%V) %Y-%m-%d %H:%M'
 
 # create temporary files to cache online data
@@ -33,7 +45,6 @@ function file_expired {
     # minutes ago, or if pacman was run after that
     if file_expired "$update_file" "$checkupdates_interval" \
             || [ /var/log/pacman.log -nt "$update_file" ]; then
-        echo "[$(date +%H:%M:%S)] Checking updates..."
         # fetch updates to a temp file first, only overwriting on success
         # this avoids erasing $update_file if checkupdates/aurupdate fails
         temp_update_file=$(mktemp)
@@ -49,9 +60,8 @@ function file_expired {
         crypto_file="${crypto_files[$ticker]}"
         if file_expired "$crypto_file" "$crypto_interval" \
                 || ! jq --exit-status . >/dev/null "$crypto_file"; then
-            echo "[$(date +%H:%M:%S)] Updating $ticker..."
             curl -fsSLo "${crypto_files[$ticker]}" \
-                "https://api.cryptonator.com/api/ticker/$ticker" || true
+                "https://api.coinmarketcap.com/v1/ticker/$ticker" || true
         fi
     done
 
@@ -64,21 +74,21 @@ function wifi_status {
         wifi='Disconnected'
     fi
 
-    if pidof openvpn >/dev/null; then
+    if pidof openvpn >/dev/null || pidof openconnect >/dev/null; then
         wifi="$wifi (VPN)"
     fi
 
     echo "$wifi"
 }
 
-# format a Cryptonator JSON file as a status bar string
+# format a CoinMarketCap JSON file as a status bar string
 function crypto_status {
     # extract $symbol, $price, $change, $timestamp
     eval "$(jq -r '@sh "
-        symbol=\(.ticker.base)
-        price=\(.ticker.price)
-        change=\(.ticker.change)
-        timestamp=\(.timestamp)"' "$1")"
+        symbol=\(.[0].symbol)
+        price=\(.[0].price_usd)
+        change=\(.[0].percent_change_24h)
+        timestamp=\(.[0].last_updated)"' "$1")"
     [ -z "${symbol+x}" ] && exit  # exit if symbol is unset
 
     [[ "$change" =~ ^- ]] && dir='▼' || dir='▲';
@@ -95,28 +105,49 @@ function crypto_status {
         age="${delta}s"
     fi
 
-    printf "%s \$%.2f %s %+.1f (%s)" "$symbol" "$price" "$dir" "$change" "$age"
+    printf "%s \$%.2f %s %+.1f%% (%s)" "$symbol" "$price" "$dir" "$change" "$age"
 }
 
-# update status text loop
-i=0
-while :; do
+function volume_status {
+    volume="$(pamixer --get-volume)"
+    if [ $(pamixer --get-mute) = true ]; then
+        speaker='🔇'
+    elif [ "$volume" -gt 50 ]; then
+        speaker='🔊'
+    elif [ "$volume" -gt 0 ]; then
+        speaker='🔉'
+    else
+        speaker='🔈'
+    fi
+
+    echo "$speaker$volume%"
+}
+
+# update status text
+crypto_index=0
+function refresh_xroot {
     date=$(date "$date_format")
     battery=$(acpi --battery | sed 's/Battery 0: //g')
     wifi=$(wifi_status)
+    volume=$(volume_status)
     emails=$(cut -d: -f1 ~/.thunderbird/*/unread-counts | paste -sd+ - | bc)
     update_count=$(( $(wc -l <"$update_file") - 1 ))
 
     # cycle through tickers
-    crypto_file="${crypto_files[${crypto_tickers[i++%${#crypto_tickers[@]}]}]}"
+    crypto_file="${crypto_files[${crypto_tickers[crypto_index % ${#crypto_tickers[@]}]}]}"
     crypto_status=$(crypto_status "$crypto_file")
 
-    root="$wifi | $battery | $date"
+    root="$wifi | $battery | $volume | $date"
     [ "$update_count" -gt 0 ] && root="${update_count}⇅ | $root"
     [ "$emails" -gt 0 ] && root="${emails}✉ | $root"
     [ -n "$crypto_status" ] && root="$crypto_status | $root"
 
     xsetroot -name "$root"
+}
 
-    sleep $update_interval
+while :; do
+    crypto_index=$((crypto_index+1))
+    refresh_xroot
+    sleep $update_interval &
+    wait $!
 done
