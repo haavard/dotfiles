@@ -170,8 +170,8 @@ vnoremap < <gv
 nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
 
-" double <leader> to swap to previous buffer
-nnoremap <silent> <Leader><Leader> :b#<CR>
+" backspace to edit alternative file
+nnoremap <BS> <C-^>
 
 " bubble lines up and down
 nnoremap <M-k> :move -2<CR>
