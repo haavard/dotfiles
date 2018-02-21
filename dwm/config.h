@@ -63,9 +63,9 @@ static const char *screenshotselcmd[] = { "scr", "--select", NULL };
 static const char *selpastecmd[] = { "selpst", "-p", NULL };
 static const char *clippastecmd[] = { "selpst", "-b", NULL };
 
-static const char *raisevolcmd[] = { "setvol", "+5%", NULL };
-static const char *lowervolcmd[] = { "setvol", "-5%", NULL };
-static const char *mutecmd[]     = { "setmute", "toggle", NULL };
+static const char *raisevolcmd[] = { "pamixer-xstatus", "-i", "5", NULL };
+static const char *lowervolcmd[] = { "pamixer-xstatus", "-d", "5", NULL };
+static const char *mutecmd[]     = { "pamixer-xstatus", "-t", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
