@@ -110,6 +110,11 @@ if has('persistent_undo')
     set undofile
 endif
 
+" enable mouse in all modes
+if has('mouse')
+    set mouse=a
+endif
+
 " }}}
 " Autocommands {{{
 
