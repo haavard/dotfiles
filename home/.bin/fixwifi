@@ -10,6 +10,6 @@ echoexec() {
 echoexec sudo rfkill unblock wifi
 echoexec sudo systemctl restart netctl-auto@wlp2s0.service
 
-echo '> Waiting for Google DNS to respond...'
-while ! ping -c 1 8.8.8.8 >/dev/null 2>/dev/null; do sleep 1; done
+echo '> Waiting for network gateway...'
+while ! checknetwork; do sleep 1; done
 echo '> Connected!'
