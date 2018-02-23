@@ -117,7 +117,7 @@ function crypto_status {
 
 function volume_status {
     volume="$(pamixer --get-volume)"
-    if [ $(pamixer --get-mute) = true ]; then
+    if [ "$(pamixer --get-mute)" = true ]; then
         speaker='🔇'
     elif [ "$volume" -gt 50 ]; then
         speaker='🔊'

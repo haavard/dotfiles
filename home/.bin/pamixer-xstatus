@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
 # pamixer-xstatus
 pamixer "$@"
-xstatus &
-disown
+nohup xstatus >/dev/null 2>&1 &
