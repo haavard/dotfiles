@@ -41,6 +41,12 @@ function file_expired {
 
 # online data refresh loop
 ( while :; do
+    # don't do anything without a network connection
+    if ! checknetwork; then
+        sleep $update_interval
+        continue
+    fi
+
     # check for updates if we last checked more than $checkupdates_interval
     # minutes ago, or if pacman was run after that
     if file_expired "$update_file" "$checkupdates_interval" \
@@ -48,8 +54,9 @@ function file_expired {
         # fetch updates to a temp file first, only overwriting on success
         # this avoids erasing $update_file if checkupdates/aurupdate fails
         temp_update_file=$(mktemp)
+
         if checkupdates >"$temp_update_file" \
-                || aurupdate -l ~/aur >>"$temp_update_file"; then
+                && aurupdate -l ~/aur >>"$temp_update_file"; then
             cat <(echo 'Updates:') "$temp_update_file" >"$update_file"
         fi
         rm "$temp_update_file"
