@@ -81,6 +81,3 @@ function :h { vim "+help $@ | only" }
 # arch signoffs login
 alias signoff='ARCHWEB_USERNAME=haavard \
     ARCHWEB_PASSWORD="$(pass logins/archweb)" signoff'
-
-# https://wiki.archlinux.org/index.php/Dwm#Fixing_misbehaving_Java_applications
-export _JAVA_AWT_WM_NONREPARENTING=1

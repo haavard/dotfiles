@@ -17,6 +17,8 @@ xstatus >/dev/null 2>&1 &
 dunst &
 
 # start window manager
+# https://wiki.archlinux.org/index.php/Dwm#Fixing_misbehaving_Java_applications
+export _JAVA_AWT_WM_NONREPARENTING=1
 exec dwm
 
 # vi: ft=sh
