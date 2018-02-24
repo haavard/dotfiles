@@ -13,7 +13,7 @@ export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 feh --bg-fill --no-fehbg "$HOME/.local/share/linus.png"
 
 # start daemons
-xstatus &
+xstatus >/dev/null 2>&1 &
 dunst &
 
 # start window manager
