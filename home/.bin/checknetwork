@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
 # checknetwork -- check for network connection by pinging default gateway
-set -o nounset
 set -o errexit
 ping -w 1 -c 1 "$(ip route | grep default | cut -d' ' -f3)" >/dev/null 2>&1
