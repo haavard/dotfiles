@@ -79,5 +79,5 @@ alias :e='$EDITOR'
 function :h { vim "+help $@ | only" }
 
 # arch signoffs login
-alias signoff='ARCHWEB_USERNAME=haavard \
-    ARCHWEB_PASSWORD="$(pass logins/archweb)" signoff'
+alias signoff='ARCHWEB_USERNAME=haavard '\
+'ARCHWEB_PASSWORD="$(pass logins/archweb)" signoff'
