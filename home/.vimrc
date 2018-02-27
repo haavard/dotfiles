@@ -119,12 +119,12 @@ endif
 " Autocommands {{{
 
 " filetype-specific formatprgs and keywordprgs
-autocmd FileType c,cpp set formatprg=clang-format
-autocmd FileType python set formatprg=yapf keywordprg=pydoc
+autocmd FileType c,cpp setlocal formatprg=clang-format
+autocmd FileType python setlocal formatprg=yapf keywordprg=pydoc
 
 " neovim doesn't handle paging/colours properly, so we need a workaround
 if has('nvim')
-    autocmd FileType python set keywordprg=:split\|terminal\ pydoc
+    autocmd FileType python setlocal keywordprg=:split\|terminal\ pydoc
 endif
 
 " disable listchars, line numbers and colorcolumn for special filetypes
