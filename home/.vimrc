@@ -118,6 +118,9 @@ endif
 " }}}
 " Autocommands {{{
 
+" enable word wrapping for certain file types
+autocmd FileType tex,markdown let &l:textwidth = &colorcolumn
+
 " filetype-specific formatprgs and keywordprgs
 autocmd FileType c,cpp setlocal formatprg=clang-format
 autocmd FileType python setlocal formatprg=yapf keywordprg=pydoc
