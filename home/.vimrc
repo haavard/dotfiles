@@ -123,12 +123,7 @@ autocmd FileType tex,markdown let &l:textwidth = &colorcolumn
 
 " filetype-specific formatprgs and keywordprgs
 autocmd FileType c,cpp setlocal formatprg=clang-format
-autocmd FileType python setlocal formatprg=yapf keywordprg=pydoc
-
-" neovim doesn't handle paging/colours properly, so we need a workaround
-if has('nvim')
-    autocmd FileType python setlocal keywordprg=:split\|terminal\ pydoc
-endif
+autocmd FileType python setlocal formatprg=yapf
 
 " disable listchars, line numbers and colorcolumn for special filetypes
 exec 'autocmd FileType ' . join(s:special_filetypes, ',') . '
