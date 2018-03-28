@@ -151,11 +151,6 @@ command! PU PlugUpdate | PlugUpgrade
 " }}}
 " Mappings {{{
 
-" set leader to space and localleader to comma
-let mapleader="\<Space>"
-let maplocalleader=','
-nnoremap <Space> <Nop>
-
 " use jk or kj to escape from normal mode
 inoremap jk <Esc>
 inoremap kj <Esc>
