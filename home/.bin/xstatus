@@ -18,18 +18,21 @@ trap 'true' USR1
 update_interval=5  # how often to run main loops (seconds)
 checkupdates_interval=15  # how often to refresh checkupdates data (minutes)
 crypto_interval=15  # how often to refresh cryptocurrency data (minutes)
+lastfm_interval=1  # how often to refresh last.fm data (minutes)
 crypto_tickers=(bitcoin litecoin ethereum nano)  # CoinMarketCap tickers
+lastfm_user=harpyon
+lastfm_api_key="$LASTFM_API_KEY"
 date_format='+%a (W%V) %Y-%m-%d %H:%M'
 
 # create temporary files to cache online data
 temp_dir=$(mktemp -d --tmpdir xstatus.XXXXXXXXXX)
 update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
+lastfm_file=$(mktemp -p "$temp_dir" lastfm.XXXXXXXXXX)
 declare -A crypto_files
 for ticker in "${crypto_tickers[@]}"; do
     crypto_files[$ticker]=$(mktemp -p "$temp_dir" crypto.XXXXXXXXXX)
 done
-
-tempfiles=("$update_file" "${crypto_files[@]}")
+tempfiles=("$update_file" "$lastfm_file" "${crypto_files[@]}")
 trap "rm ${tempfiles[*]@Q} && rmdir '$temp_dir'" EXIT
 
 # exit with 0 if file is empty or older than $minutes
@@ -60,6 +63,13 @@ function file_expired {
             cat <(echo 'Updates:') "$temp_update_file" >"$update_file"
         fi
         rm "$temp_update_file"
+    fi
+
+    # update last.fm status
+    if file_expired "$lastfm_file" "$lastfm_interval" \
+            || ! jq --exit-status . >/dev/null "$crypto_file"; then
+        curl -fSsLo "$lastfm_file" \
+            "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&format=json&limit=1&api_key=$lastfm_api_key&user=$lastfm_user" || true
     fi
 
     # update crypto tickers if data is expired or not valid
@@ -115,6 +125,23 @@ function crypto_status {
     printf "%s \$%.2f %s %+.1f%% (%s)" "$symbol" "$price" "$dir" "$change" "$age"
 }
 
+
+function lastfm_status {
+    # extract currently playing track data
+    now_playing="$(jq '.recenttracks.track[] | select(."@attr".nowplaying=="true")' \
+        "$lastfm_file")"
+    [ -z "${now_playing+x}" ] && exit
+
+    # extract $artist, $album, $track
+    eval "$(jq -r '@sh "
+        artist=\(.artist."#text")
+        album=\(.album."#text")
+        track=\(.name)"' <<<"$now_playing")"
+    [ -z ${track+x} ] && exit
+
+    echo "$artist — $track ($album)"
+}
+
 function volume_status {
     volume="$(pamixer --get-volume)"
     if [ "$(pamixer --get-mute)" = true ]; then
@@ -139,6 +166,7 @@ function refresh_xroot {
     volume=$(volume_status)
     emails=$(cut -d: -f1 ~/.thunderbird/*/unread-counts | paste -sd+ - | bc)
     update_count=$(( $(wc -l <"$update_file") - 1 ))
+    lastfm_np="$(lastfm_status)"
 
     # cycle through tickers
     crypto_file="${crypto_files[${crypto_tickers[crypto_index % ${#crypto_tickers[@]}]}]}"
@@ -148,6 +176,7 @@ function refresh_xroot {
     [ "$update_count" -gt 0 ] && root="${update_count}⇅ | $root"
     [ "$emails" -gt 0 ] && root="${emails}✉ | $root"
     [ -n "$crypto_status" ] && root="$crypto_status | $root"
+    [ -n "$lastfm_np" ] && root="🎶 $lastfm_np | $root"
 
     xsetroot -name "$root"
 }
