@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# pac-autoremove -- remove orphan packages (-Qdt)
+set -o errexit
+pacman --query --quiet --deps --unrequired \
+    | sudo pacman --remove --unneeded --recursive
