@@ -30,7 +30,6 @@ zstyle ':acceptline:default' nocompwarn true
 
 # use full hostname in prompt
 zstyle ':prompt:grml:left:items:host' token '%M '
-zstyle ':prompt:grml:left:items:host' post '%f'
 
 # legal colors for hostname (same as weechat.color.chat_nick_colors)
 host_colors=(1 2 3 4 5 6 9 13 24 25 28 29 30 31 32 33 34 35 36 37 38 39 40 41
@@ -52,6 +51,7 @@ function host_color {
 if ! grml_theme_has_token host-color; then
     grml_theme_add_token host-color -i host_color
 fi
+zstyle ':prompt:grml:left:items:host' post '%f'
 
 # add virtualenv to prompt
 function virtual_env_prompt { REPLY=${VIRTUAL_ENV+(${VIRTUAL_ENV:t}) } }
