@@ -148,6 +148,10 @@ command! W execute 'write !sudo tee % >/dev/null' | :edit!
 " :PU to update/upgrade plugins and vim-plug itself
 command! PU PlugUpdate | PlugUpgrade
 
+" :DiffOrig from :h :DiffOrig
+command! DiffOrig vert new | set buftype=nofile | read ++edit # | 0d_
+            \ | diffthis | wincmd p | diffthis
+
 " }}}
 " Mappings {{{
 
