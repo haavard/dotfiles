@@ -10,6 +10,11 @@ set ignorecase smartcase
 " disable incremental search and highlighted search results
 set noincsearch nohlsearch
 
+" use + as unnamed register if possible, mapping to system clipboard
+if has('unnamedplus')
+    set clipboard+=unnamedplus
+endif
+
 " }}}
 " Mappings {{{
 
