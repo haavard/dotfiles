@@ -102,7 +102,7 @@ endif
 
 " use + as unnamed register if possible, mapping to system clipboard
 if has('unnamedplus') || has('nvim')  " nvim always has unnamedplus
-    set clipboard+=unnamedplus
+    set clipboard^=unnamedplus
 endif
 
 " store undo history in undodir
