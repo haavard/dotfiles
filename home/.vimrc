@@ -139,6 +139,11 @@ let g:numbers_exclude = s:special_filetypes
 " use zathura for previewing documents with vimtex
 let g:vimtex_view_method = 'zathura'
 
+" use neovim-remote for full vimtex support in neovim
+if has('nvim')
+  let g:vimtex_compiler_progname = 'nvr'
+endif
+
 " }}}
 " Commands {{{
 
