@@ -169,8 +169,8 @@ vnoremap > >gv
 vnoremap < <gv
 
 " move logically across wrapped lines with j/k
-nnoremap <expr> j v:count ? 'j' : 'gj'
-nnoremap <expr> k v:count ? 'k' : 'gk'
+noremap <expr> j v:count ? 'j' : 'gj'
+noremap <expr> k v:count ? 'k' : 'gk'
 
 " backspace to edit alternative file
 nnoremap <BS> <C-^>
