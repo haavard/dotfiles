@@ -144,6 +144,9 @@ if has('nvim')
   let g:vimtex_compiler_progname = 'nvr'
 endif
 
+" ignore {over,under}full \hbox warnings
+let g:vimtex_quickfix_latexlog = { 'overfull' : 0, 'underfull' : 0 }
+
 " }}}
 " Commands {{{
 
