@@ -76,10 +76,12 @@ fi
 zstyle ':prompt:grml:left:setup' items \
     rc virtual-env change-root user at host-color host path vcs percent
 
-# use nvim as vim if available
+# use nvim as vim if available, otherwise enable servername for vimtex
 if check_com -c nvim; then
     alias vim=nvim
     export EDITOR=nvim
+elif vim --version | grep +clientserver >/dev/null; then
+    VIM_OPTIONS=(--servername VIM)
 fi
 
 # configuration shortcuts
