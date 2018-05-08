@@ -21,6 +21,10 @@ source_if_exists \
 source_if_exists /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source_if_exists /etc/zsh_command_not_found
 
+# configure zsh-autosuggestions
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=10'
+ZSH_AUTOSUGGEST_USE_ASYNC=yes
+
 # configure zsh-history-substring-search
 [ -n "$widgets[history-substring-search-up]" ] \
     && bindkey '^P' history-substring-search-up
