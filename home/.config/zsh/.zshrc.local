@@ -17,12 +17,15 @@ source_if_exists \
 source_if_exists \
     /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 
-bindkey '^P' history-substring-search-up
-bindkey '^N' history-substring-search-down
-
 # Ubuntu plugins
 source_if_exists /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source_if_exists /etc/zsh_command_not_found
+
+# configure zsh-history-substring-search
+[ -n "$widgets[history-substring-search-up]" ] \
+    && bindkey '^P' history-substring-search-up
+[ -n "$widgets[history-substring-search-down]" ] \
+    && bindkey '^N' history-substring-search-down
 
 # store history in $XDG_DATA_HOME
 HISTFILE="${XDG_DATA_HOME:-$HOME/.cache}/.zhistory"
