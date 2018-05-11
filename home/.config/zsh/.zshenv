@@ -11,3 +11,7 @@ DIRSTACKFILE="${XDG_DATA_HOME:-$HOME/.cache}"/.zdirs
 
 # docker XDG base directory
 export DOCKER_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"/docker
+
+# extend $PATH
+typeset -U path
+path=(~/.bin $path[@])
