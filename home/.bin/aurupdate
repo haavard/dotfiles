@@ -19,8 +19,8 @@ lockdir=/tmp/aur_$(tr -cd 'a-zA-Z0-9' </dev/urandom | head -c 32)
 trap '[ -d "$lockdir" ] && rmdir "$lockdir"' INT TERM EXIT
 
 # text formatting
-bold="$(tput bold)"
-reset="$(tput sgr0)"
+bold=$(tput bold)
+reset=$(tput sgr0)
 
 # prompt a yes/no question
 prompt() {
@@ -47,7 +47,7 @@ verbose() {
 
 # update package with user confirmation
 update_pkg() {
-    pkg="$(basename "$1")"
+    pkg=$(basename "$1")
 
     if prompt "Update $pkg?" y; then
         verbose git merge
