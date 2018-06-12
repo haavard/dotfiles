@@ -1,6 +1,19 @@
 URxvt.scrollBar: false
 URxvt.intensityStyles: false
-URxvt.font: xft:Hack-12
+URxvt.font: xft:Hack-12, \
+            xft:Symbola, \
+            xft:Symbola:pixelsize=15, \
+            xft:Symbola:pixelsize=14, \
+            xft:Symbola:pixelsize=13, \
+            xft:Symbola:pixelsize=12, \
+            xft:Symbola:pixelsize=11, \
+            xft:Symbola:pixelsize=10, \
+            xft:Symbola:pixelsize=9, \
+            xft:Symbola:pixelsize=8, \
+            xft:Symbola:pixelsize=7, \
+            xft:Symbola:pixelsize=6, \
+            xft:Symbola:pixelsize=5, \
+            xft:Symbola:pixelsize=4
 URxvt.perl-ext-common:default,matcher
 URxvt.urgentOnBell: true
 URxvt.iso14755: false
