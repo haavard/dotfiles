@@ -39,6 +39,9 @@ ZSH_AUTOSUGGEST_USE_ASYNC=yes
 # store history in $XDG_DATA_HOME
 HISTFILE="${XDG_DATA_HOME:-$HOME/.cache}/.zhistory"
 
+# disallow overwriting existing files
+unsetopt clobber
+
 # pass unmatched globs to the command, instead of failing
 # e.g. "zsh: no matches found: HEAD^"
 unsetopt nomatch
