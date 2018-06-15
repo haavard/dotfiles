@@ -7,9 +7,15 @@
     insteadOf = "gh:"
 [url "git@github.com:"]
     pushInsteadOf = "gh:"
-
 [url "git@github.com:"]
     insteadOf = "ghs:"
+
+[url "https://gitlab.com/"]
+    insteadOf = "gl:"
+[url "git@gitlab.com:"]
+    pushInsteadOf = "gl:"
+[url "git@gitlab.com:"]
+    insteadOf = "gls:"
 
 [url "https://aur.archlinux.org/"]
     insteadOf = "aur:"
