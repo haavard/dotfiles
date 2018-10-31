@@ -50,6 +50,9 @@ unsetopt nomatch
 CORRECT_IGNORE='_*'
 zstyle ':acceptline:default' nocompwarn true
 
+# use less for <file style paging
+READNULLCMD=less
+
 # use full hostname in prompt
 zstyle ':prompt:grml:left:items:host' token '%M '
 
