@@ -4,20 +4,20 @@
 	signingkey = 928988CE
 
 [url "https://github.com/"]
-    insteadOf = "gh:"
+	insteadOf = "gh:"
 [url "git@github.com:"]
-    pushInsteadOf = "gh:"
+	pushInsteadOf = "gh:"
 [url "git@github.com:"]
-    insteadOf = "ghs:"
+	insteadOf = "ghs:"
 
 [url "https://gitlab.com/"]
-    insteadOf = "gl:"
+	insteadOf = "gl:"
 [url "git@gitlab.com:"]
-    pushInsteadOf = "gl:"
+	pushInsteadOf = "gl:"
 [url "git@gitlab.com:"]
-    insteadOf = "gls:"
+	insteadOf = "gls:"
 
 [url "https://aur.archlinux.org/"]
-    insteadOf = "aur:"
+	insteadOf = "aur:"
 [url "aur@aur.archlinux.org:"]
-    pushInsteadOf = "aur:"
+	pushInsteadOf = "aur:"
