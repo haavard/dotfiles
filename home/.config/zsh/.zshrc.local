@@ -53,6 +53,12 @@ zstyle ':acceptline:default' nocompwarn true
 # use less for <file style paging
 READNULLCMD=less
 
+# magic path completion: f/b/b<tab> --> foo/bar/baz
+zstyle ':completion:*'                                  matcher-list \
+        'm:{a-z\-}={A-Z\_}' \
+        'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \
+        'r:|?=** m:{a-z\-}={A-Z\_}'
+
 # use full hostname in prompt
 zstyle ':prompt:grml:left:items:host' token '%M '
 
