@@ -1,5 +1,6 @@
 [options]
 font = Hack 12
+bold_is_bright = false
 
 # Solarized dark color scheme
 
