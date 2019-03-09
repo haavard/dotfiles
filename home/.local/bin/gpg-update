@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# gpg-update -- export an updated gpg key to the right places
+set -o errexit
+set -o nounset
+
+fingerprint=0455A421361C894E5FC15D3130CC1320928988CE
+short_id=${fingerprint: -8}
+pubkey_filename=/var/www/files/$short_id.asc
+
+echo ">>> Key fingerprint: $fingerprint"
+
+echo '>>> Sending public key to keyservers...'
+gpg --send-keys "$fingerprint"
+
+echo ">>> Updating $pubkey_filename on vps..."
+# shellcheck disable=SC2029
+gpg --export --armor "$fingerprint" | ssh vps "cat - >$(printf %q "$pubkey_filename")"
+
+echo '>>> Updating public key on Keybase...'
+keybase login
+keybase pgp update
+
+echo '>>> Success!'
