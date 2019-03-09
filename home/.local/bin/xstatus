@@ -22,8 +22,9 @@ date_format='+%a (W%V) %Y-%m-%d %H:%M'
 # create temporary files to cache online data
 temp_dir=$(mktemp -d --tmpdir xstatus.XXXXXXXXXX)
 update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
+
 {   # shellcheck disable=SC2064
-    trap "rm '$update_file' && rmdir '$temp_dir'" EXIT
+    trap "jobs -p | xargs kill; rm '$update_file' && rmdir '$temp_dir'" EXIT
 }
 
 # exit with 0 if file is empty or older than $minutes
