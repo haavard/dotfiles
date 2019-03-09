@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# check-foreign -- look for mismatches between foreign packages and the AUR
+set -o errexit
+set -o nounset
+
+# get all package directories we have locally
+aur_directories=$(find ~/{,dev/}aur -mindepth 1 -maxdepth 1 -type d ! -name '\.*' -printf '%f\n')
+
+# list any foreign packages that don't correspond to local package directories
+echo "$(tput bold)Foreign packages not found locally:$(tput sgr0)"
+pacman -Qqm | grep -vxFf <(echo "$aur_directories")
+
+# list any package directories that are not on the AUR
+echo "$(tput bold)Local packages not found on AUR:$(tput sgr0)"
+grep -vxFf <(aurpkglist) <<< "$aur_directories"
