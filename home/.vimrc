@@ -95,6 +95,9 @@ set scrolloff=10
 " disable cursor shapes in neovim
 set guicursor=
 
+" specify gui font
+set guifont=Hack-Regular:h13
+
 " enhanced command completion
 if has('wildmenu')
     set wildmenu
