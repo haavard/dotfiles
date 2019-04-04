@@ -21,6 +21,11 @@ source_if_exists \
 source_if_exists /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source_if_exists /etc/zsh_command_not_found
 
+# macOS plugins
+source_if_exists /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source_if_exists /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source_if_exists /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
 # Local plugins
 source_if_exists ~/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source_if_exists \
