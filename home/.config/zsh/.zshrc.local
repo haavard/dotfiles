@@ -80,11 +80,18 @@ host_colors=(1 2 3 4 5 6 9 13 24 25 28 29 30 31 32 33 34 35 36 37 38 39 40 41
 224 225 226 227 228 229 230)
 
 # color hostname by its hash
-function host_color {
-    local hash="0x${$(sha1sum <<< $HOST)[1,8]}"
-    local color="${host_colors[$hash % ${#host_colors[@]}]}"
-    REPLY="%F{$color}"
-}
+if check_com -c sha1sum; then
+    function host_color {
+        local hash="0x${$(sha1sum <<< $HOST)[1,8]}"
+        local color="${host_colors[$hash % ${#host_colors[@]}]}"
+        REPLY="%F{$color}"
+    }
+else
+    function host_color {
+        REPLY="%F{180}"
+    }
+fi
+
 if ! grml_theme_has_token host-color; then
     grml_theme_add_token host-color -i host_color
 fi
