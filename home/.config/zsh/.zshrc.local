@@ -42,6 +42,7 @@ ZSH_AUTOSUGGEST_USE_ASYNC=yes
     && bindkey '^N' history-substring-search-down
 
 # store history in $XDG_DATA_HOME
+mkdir -p -- "${XDG_DATA_HOME:-$HOME/.cache}"
 HISTFILE="${XDG_DATA_HOME:-$HOME/.cache}/.zhistory"
 
 # disallow overwriting existing files
