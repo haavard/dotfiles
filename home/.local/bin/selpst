@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 
-url=$(xsel -o "$@" | curl -sSF c=@- https://ptpb.pw/?u=1) \
+url=$(xsel -o "$@" | curl -sS --data-binary @- https://paste.rs) \
     || (code=$? && notify-send "Paste error: $code" && exit $code)
 
 echo "$url" | tee -a "${XDG_CACHE_HOME:-$HOME/.cache}"/selpst.log
