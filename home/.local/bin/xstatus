@@ -3,8 +3,8 @@
 set -o nounset
 
 pidfile="${XDG_CACHE_HOME:-$HOME/.cache}"/xstatus.pid
-if ps -p "$(cat "$pidfile")" &>/dev/null; then
-    echo "Already running, sending refresh signal..."
+if ps -p "$(cat "$pidfile")" | grep "$0" &>/dev/null; then
+    echo "Already running ($(cat "$pidfile")), sending refresh signal..."
     kill -USR1 "$(cat "$pidfile")"
     exit
 else
@@ -99,7 +99,7 @@ function refresh_xroot {
     root="$wifi | $battery | $volume | $date"
     [ "$update_count" -gt 0 ] && root="${update_count}⇅ | $root"
 
-    xsetroot -name "$root"
+    xsetroot -name " $root"
 }
 
 while :; do
