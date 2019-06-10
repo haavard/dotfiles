@@ -101,6 +101,9 @@ elif vim --version | grep +clientserver >/dev/null; then
     VIM_OPTIONS=(--servername VIM)
 fi
 
+# reflink copy when possible
+alias cp='cp --reflink=auto --sparse=always'
+
 # configuration shortcuts
 alias ez='$EDITOR '"${0:A} && source ${0:A}"
 alias ev='$EDITOR ~/.vimrc'
