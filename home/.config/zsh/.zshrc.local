@@ -117,3 +117,26 @@ function :h { vim "+help $@ | only" }
 # arch signoffs login
 alias signoff='ARCHWEB_USERNAME=haavard '\
 'ARCHWEB_PASSWORD="$(pass logins/archweb | head -n 1)" signoff'
+
+# vps socks proxy + chromium
+function vpsproxy {
+    if pgrep chromium >/dev/null; then
+        echo 'Chromium is running; quit it and try again'
+        return 1
+    fi
+
+    # spin up socks proxy
+    ssh -D 1337 -C -N -q vps &
+    ssh_pid=$!
+    echo "Proxy PID: $ssh_pid"
+    sleep 1  # give it a second to start up
+
+    # start chromium using socks proxy
+    chromium --proxy-server=socks5://localhost:1337 \
+             --host-resolver-rules='MAP * ~NOTFOUND , EXCLUDE localhost' \
+             https://haavard.me/whoami.html
+
+    # after chromium exit, kill the proxy process
+    echo "Killing $ssh_pid..."
+    kill "$ssh_pid" && echo "Killed $ssh_pid" || echo 'Failed to kill!'
+}
