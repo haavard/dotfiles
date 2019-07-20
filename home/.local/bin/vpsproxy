@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# vpsproxy -- ssh socks proxy + chromium
+set -o errexit
+set -o nounset
+
+if pgrep chromium >/dev/null; then
+    echo 'Chromium is already running; quit it and try again'
+    exit 1
+fi
+
+# spin up socks proxy
+ssh -D 1337 -C -N -q vps &
+readonly ssh_pid=$!
+trap 'kill "$ssh_pid"' EXIT
+
+# give proxy a second to initialize
+sleep 1
+
+# start chromium using socks proxy
+chromium --proxy-server=socks5://localhost:1337 \
+         --host-resolver-rules='MAP * ~NOTFOUND , EXCLUDE localhost' \
+         https://haavard.me/whoami.html
+
