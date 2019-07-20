@@ -3,7 +3,7 @@
 set -o nounset
 
 pidfile="${XDG_CACHE_HOME:-$HOME/.cache}"/xstatus.pid
-if ps -fp "$(cat "$pidfile")" | grep "$0" &>/dev/null; then
+if pgrep -fF "$pidfile" "$0" &>/dev/null; then
     echo "Already running ($(cat "$pidfile")), sending refresh signal..."
     kill -USR1 "$(cat "$pidfile")"
     exit
