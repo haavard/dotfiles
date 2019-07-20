@@ -23,8 +23,10 @@ date_format='+%a (W%V) %Y-%m-%d %H:%M'
 temp_dir=$(mktemp -d --tmpdir xstatus.XXXXXXXXXX)
 update_file=$(mktemp -p "$temp_dir" updates.XXXXXXXXXX)
 
+# ensure everything is killed and cleaned up on exit
+trap exit INT TERM
 {   # shellcheck disable=SC2064
-    trap "jobs -p | xargs kill; rm '$update_file' && rmdir '$temp_dir'" EXIT
+    trap "kill 0; rm '$update_file' && rmdir '$temp_dir'" EXIT
 }
 
 # exit with 0 if file is empty or older than $minutes

@@ -424,7 +424,7 @@ gfyname="${adjective1}${adjective2}${animal}.png"
 
 filename=$(mktemp --suffix=.png)
 {   # shellcheck disable=SC2064
-    trap "rm -f '$filename'" EXIT
+    trap "rm -f '$filename'" INT TERM EXIT
 }
 
 maim "$@" "$filename"

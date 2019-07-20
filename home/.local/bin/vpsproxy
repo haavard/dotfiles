@@ -8,10 +8,13 @@ if pgrep chromium >/dev/null; then
     exit 1
 fi
 
+# ensure everything is killed on exit
+trap exit INT TERM
+trap 'kill 0' EXIT
+
 # spin up socks proxy
 ssh -D 1337 -C -N -q vps &
 readonly ssh_pid=$!
-trap 'kill "$ssh_pid"' EXIT
 
 # give proxy a second to initialize
 sleep 1
