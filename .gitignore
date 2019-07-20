@@ -10,3 +10,4 @@ home/.weechat/plugins
 home/.weechat/script/plugins.xml.gz
 home/.weechat/weechat_crash_*.log
 home/.weechat/weechat.log
+dwm/dwm-build
