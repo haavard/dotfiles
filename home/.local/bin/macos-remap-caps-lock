@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# macos-remap-caps-lock -- map the caps lock key to backspace on macOS
+hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x70000002A}]}'
