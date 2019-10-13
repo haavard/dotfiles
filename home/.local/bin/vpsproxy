@@ -22,5 +22,5 @@ sleep 1
 # start chromium using socks proxy
 chromium --proxy-server=socks5://localhost:1337 \
          --host-resolver-rules='MAP * ~NOTFOUND , EXCLUDE localhost' \
-         https://haavard.me/whoami.html
+         https://haavard.me/whoami
 
