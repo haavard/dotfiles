@@ -127,6 +127,7 @@ autocmd FileType tex,markdown let &l:textwidth = &colorcolumn
 " filetype-specific formatprgs and keywordprgs
 autocmd FileType c,cpp setlocal formatprg=clang-format
 autocmd FileType python setlocal formatprg=yapf
+autocmd FileType json setlocal formatprg=jq
 
 " disable listchars, line numbers and colorcolumn for special filetypes
 exec 'autocmd FileType ' . join(s:special_filetypes, ',') . '
