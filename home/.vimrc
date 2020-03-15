@@ -33,7 +33,6 @@ call plug#begin(s:vim_plugged_location)
 Plug 'altercation/vim-colors-solarized'
 Plug 'itchyny/lightline.vim'
 Plug 'myusuf3/numbers.vim'
-Plug 'lervag/vimtex', { 'for': 'tex' }
 call plug#end()
 
 " }}}
@@ -139,17 +138,6 @@ exec 'autocmd FileType ' . join(s:special_filetypes, ',') . '
 
 " disable numbers.vim in special filetypes
 let g:numbers_exclude = s:special_filetypes
-
-" use zathura for previewing documents with vimtex
-let g:vimtex_view_method = 'zathura'
-
-" use neovim-remote for full vimtex support in neovim
-if has('nvim')
-  let g:vimtex_compiler_progname = 'nvr'
-endif
-
-" ignore {over,under}full \hbox warnings
-let g:vimtex_quickfix_latexlog = { 'overfull' : 0, 'underfull' : 0 }
 
 " }}}
 " Commands {{{
