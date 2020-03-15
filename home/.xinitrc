@@ -1,5 +1,5 @@
 # keyboard setup
-setxkbmap -layout no -variant nodeadkeys
+setxkbmap -layout us
 
 # X setup
 xrdb "${XDG_CONFIG_HOME:-$HOME/.config}"/X11/Xresources
